@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Home</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="style_ut.css">
+<script src="//code.jquery.com/jquery-1.11.1.js"></script>
+<link rel="stylesheet" href="../css/ms-box.css">
+<script src="../js/ms-box.js"></script>
+
+</head>
+<!--
+MS_BOX
+
+Class available:
+{ms-box}  > (obbligatory) indicates the parent node that contains the structure to be mapped,
+{ms-anchor}  > (obbligatory) indicates the exact point where the new html form to include the changes,
+{ms-sign}  > suitable for all html tags  - displays the contents of a tag <input>,
+{ms-sign-link}  > suitable for html tags <a> - creates two fields one for the href url and the other for the description,
+{ms-sign-image}  > suitable for html tags <img> - creates a field for entering the src url plus a button for uploading and image tags,
+{ms-sign-textarea}  > suitable for all html tags - displays the contents of a tag <textarea>,
+{ms-sign-hidden}  > suitable for all html tags - displays the contents of a tag <input type="hidden">,
+
+Attributes available:
+{label-desc} > customize the description of the label
+{label-link}  > customize the description of the label to href tag
+{ms-id}  > to use when you want to match an {id} attribute different from the existing
+
+
+Customize the functions
+setting function save delete upload
+example:
+ms_box.saveFN=function(data){console.log(data)}
+ms_box.deleteFN=function(data){console.log(data)}
+ms_box.uploadFN=function(img,data){console.log(img)}
+
+Customize the description of buttons
+setting description button save delete cancel new  upload
+example:
+ms_box.setting.btnSave="new description";
+ms_box.setting.btnUpdate="new description";
+ms_box.setting.btnCancel="new description";
+ms_box.setting.btnDelete="new description";
+ms_box.setting.btnNew="new description";
+ms_box.setting.btnUpload="new description";
+
+
+
+-->
+<body>
+  <div class="g100 top-25"></div>
+
+  <!-- sign with class {ms-box} indicates the parent node that contains the structure to be mapped  -->
+  <div class="g60 ms-box">
+
+   <!--  {ms-anchor} indicates the exact point where the new html form to include the changes -->
+    <div class="g100 ms-anchor">
+
+     <!-- sign with class {ms-sign-hidden} indicates that the item will not be visible -->
+    <input type="hidden" value="TF56567" id="codice" class="ms-sign-hidden">
+    <div class="g60">
+
+    <!-- sign with class {ms-sign-textarea} and attributes {ms-id} I indicate that I display the contents in a textarea change id-->
+      <p class="ms-sign-textarea" id="descrizione" ms-id="mydescrizione">
+        Curabitur vel lorem sit amet nulla erero fermentum. In vitae varius auguectetu ligula. Etiam dui eros, laoreet site am est vel commodo venenatisipiscing.
+      </p>
+
+    <!-- sign with class {ms-sign-link}  and attributes {label-link}  {label-desc} creates two fields -->
+      <a href="#" id="test" class="ms-sign-link" label-link="Modific url Tag A" label-desc="Modific Description Tag A">Curabitur vel lorem sit amet nulla erero fermentum.</a>
+
+    <!-- sign the html tags with class {ms-sign} displays the contents of a tag <input>-->
+        <div class="g100 ccc ms-sign">
+        In vitae varius auguectetu ligula. Etiam dui eros, laoreet site am est vel commodo venenatisipiscing.
+        </div>
+
+    </div>
+
+    <!-- sign the html tags with class {ms-sign-image} -->
+      <div class="g40"><img src="img/1.jpg" class="ms-sign-image" id="logo"> </div>
+
+      </div>
+  </div>
+
+   <!-- sign with class ms-box -->
+    <div class="g40 ms-box">
+        <!-- sign with class ms-anchor -->
+    <div class="g100 ms-anchor">
+    <div class="g60">
+    <!-- sign with class ms-sign-textarea -->
+      <p class="ms-sign-textarea">
+        Curabitur vel lorem sit amet nulla erero fermentum. In vitae varius auguectetu ligula. Etiam dui eros, laoreet site am est vel commodo venenatisipiscing.
+      </p>
+    </div>
+    <!-- sign with class ms-sign-image -->
+      <div class="g40"><img src="img/5.jpg" class="ms-sign-image"></div>
+      </div>
+    </div>
+
+
+
+    <div class="g100 top-25"> </div>
+            <!--sign with class ms-box -->
+  <div class="g60 ms-box">
+   <!-- sign with class ms-anchor -->
+    <div class="g100 ms-anchor">
+    <div class="g60">
+    <!-- sign with class ms-sign-textarea -->
+      <p class="ms-sign-textarea">
+        Curabitur vel lorem sit amet nulla erero fermentum. In vitae varius auguectetu ligula. Etiam dui eros, laoreet site am est vel commodo venenatisipiscing.
+      </p>
+    </div>
+    <!-- sign with class ms-sign-image -->
+      <div class="g40"><img src="img/5.jpg" class="ms-sign-image"></div>
+      </div>
+  </div>
+
+   <!-- sign with class ms-box -->
+    <div class="g40 ms-box">
+        <!-- sign with class ms-anchor -->
+    <div class="g100 ms-anchor">
+    <div class="g60">
+    <!-- sign with class ms-sign-textarea -->
+      <p class="ms-sign-textarea">
+        Curabitur vel lorem sit amet nulla erero fermentum. In vitae varius auguectetu ligula. Etiam dui eros, laoreet site am est vel commodo venenatisipiscing.
+      </p>
+    </div>
+    <!-- sign with class ms-sign-image -->
+      <div class="g40"><img src="img/1.jpg" class="ms-sign-image"></div>
+      </div>
+    </div>
+
+
+
+</body>
+
+</html>
