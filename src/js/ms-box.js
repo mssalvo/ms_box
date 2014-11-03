@@ -29,10 +29,10 @@
 
 */
 
-
+var ms_box= ms_box || false;
 ;$(function(){
   "use strict";
-var ms_box={
+!ms_box?ms_box={
 ms_wrap_box:"ms-box",
 ms_anchor:"ms-anchor",
 ms_sign:"ms-sign",
@@ -78,6 +78,7 @@ init:function(){
     ms_box.closeAll();
   $(this).parents("div."+ms_box.ms_anchor).find("div.ms_box_base").fadeIn(300, "linear") })
   $(".ms-save").bind("click",function(){ ms_box.saveFN(ms_box.data($(this)));
+   ms_box.changeupdate($(this));
     ms_box.showUpadate();
   $(this).parents("div."+ms_box.ms_anchor).find("div.ms_box_base").fadeOut(300, "linear"); })
   $(".ms-delete").bind("click",function(){ ms_box.deleteFN(ms_box.data($(this)));
@@ -93,6 +94,7 @@ init:function(){
     ms_box.newrec($(this)) })
   })
 
+  return true;
 },
 loadBoxWrap:function(){
   return $("."+this.ms_wrap_box);
@@ -118,14 +120,48 @@ ancor:function(o,el){
 data:function(contx){
    var bx= contx.parents("div.ms_box_base");
    var dta={};
-   $(":input[type='text'],textarea,.ms-key-hidden",bx).each(function(){
+   $(":input[type='text'],input[type='checkbox']:checked,input[type='radio']:checked,select,textarea,.ms-key-hidden",bx).each(function(){
     dta[String($(this).attr("ms-id") || $(this).attr("id") || "def_"+this.tagName).split(" ").join("")]=$.trim($(this).val())
    })
    return dta;
 },
+changeupdate:function(contx){
+   var cx= contx.parents("div.ms_box_base");
+   $(":input[type='text'],input[type='checkbox'],input[type='radio']:checked,select,textarea",cx).each(function(){
+
+   var obj=$(this);
+    $('[mark-id='+$(this).attr("id")+']').each(function(){
+    if(this.tagName=="INPUT"){
+    if($(this).attr("type")=="checkbox"){
+      $(this).prop("checked", obj.is(':checked'))
+    } else if($(this).attr("type")=="radio"){
+      $(this).val([obj.val()]);
+    }
+    else{ $(this).val(obj.val()) }
+    }
+    else if(this.tagName=="IMG"){
+    $(this).attr("src",obj.val())
+    }
+    else if(this.tagName=="A"){
+    $(this).html(obj.val())
+    }
+    else if(this.tagName=="SELECT"){
+    $(this).val(obj.val())
+    }
+    else {
+    $(this).html(obj.val())
+    }
+     //console.log(this);
+    })
+
+   })
+
+   return this.restorHtml();
+},
 restorHtml:function(){
 $("div.ms_box_base,.ms-update").remove();
- ms_box.init();
+ return ms_box.init();
+
 },
 template:function(){
   return $("<div/>")
@@ -163,9 +199,42 @@ newrec:function(contx){
    })
 
 },
+changeimg:function(o){
+   $("img#"+$(o).attr("id")+"_img",$(o).parents("div.ms-scn-image")).attr("src",$(o).val())
+    },
 scanner:function(t){
    var o=$(t);
     if(o.hasClass(this.ms_sign)){
+     o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
+     if(t.tagName=="INPUT" && (o.attr("type")=="checkbox" || o.attr("type")=="radio")){
+       return $("<div/>")
+    .addClass("ms-scn-radio")
+     .append(
+      $("<div/>")
+    .attr("id",o.attr("id")+"_label")
+    .addClass("ms-snc-radio-label")
+    .html(o.attr("label-desc") || ms_box.setting.labelDesc)
+
+    ).append(
+       $("<input/>")
+    .attr("type",o.attr("type"))
+    .attr("id",o.attr("ms-id") || o.attr("id"))
+    .attr("name",o.attr("name") || o.attr("ms-id") || o.attr("id"))
+    .prop("checked",o.is(':checked'))
+    .val(o.attr("type")=="radio" && o.is(':checked')?[o.val()]: o.val())
+    )
+     }
+     else if(t.tagName=="SELECT"){
+       return $("<div/>")
+    .addClass("ms-scn-select")
+    .append(
+      $("<div/>")
+    .attr("id",o.attr("id")+"_label")
+    .addClass("ms-snc-label")
+    .html(o.attr("label-desc") || ms_box.setting.labelDesc)
+    )
+    .append($(t.outerHTML).removeAttr("mark-id").val(o.val()))
+     } else {
      return $("<div/>")
     .addClass("ms-scn-html")
     .append(
@@ -181,9 +250,12 @@ scanner:function(t){
     .attr("name",o.attr("ms-id") || o.attr("id"))
     .val(o.val() || o.text() || o.attr("src"))
     )
+
+     }
   }
    if(o.hasClass(this.ms_link)
    && t.tagName=="A"){
+      o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
     return $("<div/>")
     .addClass("ms-scn-href")
      .append(
@@ -217,6 +289,7 @@ scanner:function(t){
    }
   if(o.hasClass(this.ms_image)
   && t.tagName=="IMG"){
+  o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
   return $("<div/>")
     .addClass("ms-scn-image")
     .append(
@@ -230,10 +303,11 @@ scanner:function(t){
     .attr("type","text")
     .attr("id",o.attr("ms-id") || o.attr("id"))
     .attr("name",o.attr("ms-id") || o.attr("id"))
+    .bind("blur",function(){ms_box.changeimg(this)})
     .val(o.attr("src"))
     )
     .append($("<img/>")
-    .attr("id",o.attr("id"))
+    .attr("id",o.attr("ms-id") || o.attr("id")+"_img")
     .attr("width","100px")
     .attr("src",o.attr("src"))
     )
@@ -246,6 +320,7 @@ scanner:function(t){
     )
   }
     if(o.hasClass(this.ms_textarea)){
+       o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
      return $("<div/>")
     .addClass("ms-scn-textarea")
     .append(
@@ -272,9 +347,7 @@ scanner:function(t){
 
 }
 
-
-}
+}:ms_box;
 
 ms_box.init();
-
 })
