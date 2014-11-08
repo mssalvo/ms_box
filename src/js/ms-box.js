@@ -28,7 +28,6 @@
        https://github.com/mssalvo/ms_box
 
 */
-
 var ms_box= ms_box || false;
 ;$(function(){
   "use strict";
@@ -60,7 +59,7 @@ setting:{
   html:""
 },
 deleteFN:function(data){console.log(data)},
-saveFN:function(data){console.log(data)},
+saveFN:function(data,call,o){console.log(data); call(o);},
 uploadFN:function(img,data){console.log(img)},
 init:function(){
   this.loadBoxWrap().each(function(){
@@ -77,8 +76,8 @@ init:function(){
   $(".ms-update").bind("click",function(){
     ms_box.closeAll();
   $(this).parents("div."+ms_box.ms_anchor).find("div.ms_box_base").fadeIn(300, "linear") })
-  $(".ms-save").bind("click",function(){ ms_box.saveFN(ms_box.data($(this)));
-   ms_box.changeupdate($(this));
+  $(".ms-save").bind("click",function(){ ms_box.saveFN(ms_box.data($(this)),ms_box.changeupdate,$(this));
+  // ms_box.changeupdate($(this));
     ms_box.showUpadate();
   $(this).parents("div."+ms_box.ms_anchor).find("div.ms_box_base").fadeOut(300, "linear"); })
   $(".ms-delete").bind("click",function(){ ms_box.deleteFN(ms_box.data($(this)));
@@ -92,6 +91,7 @@ init:function(){
     ms_box.uploadFN($(this).parents(".ms-scn-image").find("img"),ms_box.data($(this))) })
   $(".ms-addnew").bind("click",function(){
     ms_box.newrec($(this)) })
+
   })
 
   return true;
@@ -121,16 +121,15 @@ data:function(contx){
    var bx= contx.parents("div.ms_box_base");
    var dta={};
    $(":input[type='text'],input[type='checkbox']:checked,input[type='radio']:checked,select,textarea,.ms-key-hidden",bx).each(function(){
-    dta[String($(this).attr("ms-id") || $(this).attr("id") || "def_"+this.tagName).split(" ").join("")]=$.trim($(this).val())
+    dta[String($(this).attr("id") || this.tagName+"_"+$(this).attr("ms-id") || "def_"+this.tagName).split(" ").join("")]=$.trim($(this).val())
    })
    return dta;
 },
 changeupdate:function(contx){
    var cx= contx.parents("div.ms_box_base");
    $(":input[type='text'],input[type='checkbox'],input[type='radio']:checked,select,textarea",cx).each(function(){
-
    var obj=$(this);
-    $('[mark-id='+$(this).attr("id")+']').each(function(){
+    $('[mark-id='+$(this).attr("ms-id")+']').each(function(){
     if(this.tagName=="INPUT"){
     if($(this).attr("type")=="checkbox"){
       $(this).prop("checked", obj.is(':checked'))
@@ -153,15 +152,13 @@ changeupdate:function(contx){
     }
      //console.log(this);
     })
-
    })
 
-   return this.restorHtml();
+   return ms_box.restorHtml();
 },
 restorHtml:function(){
 $("div.ms_box_base,.ms-update").remove();
  return ms_box.init();
-
 },
 template:function(){
   return $("<div/>")
@@ -197,15 +194,15 @@ newrec:function(contx){
      $(this).val("");
     }
    })
-
 },
 changeimg:function(o){
    $("img#"+$(o).attr("id")+"_img",$(o).parents("div.ms-scn-image")).attr("src",$(o).val())
     },
 scanner:function(t){
    var o=$(t);
+    var uid= ms_box.uiid()
     if(o.hasClass(this.ms_sign)){
-     o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
+      o.attr("mark-id",uid)
      if(t.tagName=="INPUT" && (o.attr("type")=="checkbox" || o.attr("type")=="radio")){
        return $("<div/>")
     .addClass("ms-scn-radio")
@@ -214,12 +211,12 @@ scanner:function(t){
     .attr("id",o.attr("id")+"_label")
     .addClass("ms-snc-radio-label")
     .html(o.attr("label-desc") || ms_box.setting.labelDesc)
-
     ).append(
        $("<input/>")
     .attr("type",o.attr("type"))
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("name") || o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id") || uid)
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .prop("checked",o.is(':checked'))
     .val(o.attr("type")=="radio" && o.is(':checked')?[o.val()]: o.val())
     )
@@ -233,7 +230,7 @@ scanner:function(t){
     .addClass("ms-snc-label")
     .html(o.attr("label-desc") || ms_box.setting.labelDesc)
     )
-    .append($(t.outerHTML).removeAttr("mark-id").val(o.val()))
+    .append($(t.outerHTML).removeAttr("mark-id").attr("ms-id",uid).val(o.val()))
      } else {
      return $("<div/>")
     .addClass("ms-scn-html")
@@ -246,8 +243,9 @@ scanner:function(t){
     )
     .append($("<input/>")
     .attr("type","text")
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id")|| uid)
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .val(o.val() || o.text() || o.attr("src"))
     )
 
@@ -255,8 +253,8 @@ scanner:function(t){
   }
    if(o.hasClass(this.ms_link)
    && t.tagName=="A"){
-      o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
-    return $("<div/>")
+      o.attr("mark-id",uid)
+     return $("<div/>")
     .addClass("ms-scn-href")
      .append(
       $("<div/>")
@@ -268,8 +266,9 @@ scanner:function(t){
     .append(
       $("<input/>")
     .attr("type","text")
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id")|| uid)
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .val(o.text())
     )
     .append(
@@ -277,37 +276,38 @@ scanner:function(t){
     .attr("id",o.attr("id")+"_link_label")
     .addClass("ms-snc-label")
     .html(o.attr("label-link") || ms_box.setting.labelDescLink)
-
     )
     .append(
       $("<input/>")
     .attr("type","text")
     .attr("id",o.attr("id")+"_link")
+    .attr("ms-id",uid+"_link")
     .attr("name",o.attr("id")+"_link")
     .val(o.attr("href"))
     )
    }
   if(o.hasClass(this.ms_image)
   && t.tagName=="IMG"){
-  o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
-  return $("<div/>")
+      o.attr("mark-id",uid)
+     return $("<div/>")
     .addClass("ms-scn-image")
     .append(
       $("<div/>")
     .attr("id",o.attr("id")+"_label")
     .addClass("ms-snc-label")
     .html(o.attr("label-desc") || ms_box.setting.labelDescImg)
-
     )
     .append($("<input/>")
     .attr("type","text")
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id") || uid )
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .bind("blur",function(){ms_box.changeimg(this)})
     .val(o.attr("src"))
     )
     .append($("<img/>")
-    .attr("id",o.attr("ms-id") || o.attr("id")+"_img")
+    .attr("id",o.attr("id")?o.attr("id")+ "_img" : uid + "_img")
+    .attr("ms-id",uid)
     .attr("width","100px")
     .attr("src",o.attr("src"))
     )
@@ -320,7 +320,8 @@ scanner:function(t){
     )
   }
     if(o.hasClass(this.ms_textarea)){
-       o.attr("mark-id",o.attr("ms-id") || o.attr("id"))
+     uid= ms_box.uiid()
+     o.attr("mark-id",uid)
      return $("<div/>")
     .addClass("ms-scn-textarea")
     .append(
@@ -330,24 +331,47 @@ scanner:function(t){
     .html(o.attr("label-desc") || ms_box.setting.labelDesc)
     )
     .append($("<textarea/>")
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id") || uid)
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .val(o.val() || o.text() || o.attr("src"))
     )
   }
     if(o.hasClass(this.ms_hidden)){
+     o.attr("mark-id",uid)
      return $("<input/>")
     .addClass("ms-key-hidden")
     .attr("type","hidden")
-    .attr("id",o.attr("ms-id") || o.attr("id"))
-    .attr("name",o.attr("ms-id") || o.attr("id"))
+    .attr("id",o.attr("id") || uid)
+    .attr("ms-id",uid)
+    .attr("name",o.attr("name") || o.attr("id") || uid)
     .val(o.val() || o.text() || o.attr("src"))
 
   }
 
+},
+keys:['0', '0', '0','0'],
+uiid:function() {
+  var char_=0;
+  for(var len_ = ms_box.keys.length; len_--; ){
+    char_ = ms_box.keys[len_].charCodeAt(0);
+    if (char_ == 57) { 
+      ms_box.keys[len_] = 'A';
+      return ms_box.keys.join('');
+    }
+    if (char_ == 90) { 
+      ms_box.keys[len_] = '0';
+    } else {
+      ms_box.keys[len_] = String.fromCharCode(char_ + 1);
+      return ms_box.keys.join('');
+    }
+  }
+  ms_box.keys.unshift('0');
+  return ms_box.keys.join('');
 }
 
 }:ms_box;
 
 ms_box.init();
+
 })
