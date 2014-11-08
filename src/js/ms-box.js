@@ -99,6 +99,7 @@ init:function(){
 loadBoxWrap:function(){
   return $("."+this.ms_wrap_box);
 },
+keys:['0', '0', '0','0'],
 closeAll:function(){$("div.ms_box_base,.ms-update").fadeOut(120, "linear")},
 showUpadate:function(){$(".ms-update").fadeIn(120, "linear")},
 ancor:function(o,el){
@@ -200,7 +201,7 @@ changeimg:function(o){
     },
 scanner:function(t){
    var o=$(t);
-    var uid= ms_box.uiid()
+    var uid= this.uiid()
     if(o.hasClass(this.ms_sign)){
       o.attr("mark-id",uid)
      if(t.tagName=="INPUT" && (o.attr("type")=="checkbox" || o.attr("type")=="radio")){
@@ -350,24 +351,23 @@ scanner:function(t){
   }
 
 },
-keys:['0', '0', '0','0'],
 uiid:function() {
   var char_=0;
-  for(var len_ = ms_box.keys.length; len_--; ){
-    char_ = ms_box.keys[len_].charCodeAt(0);
+  for(var len_ = this.keys.length; len_--; ){
+    char_ = this.keys[len_].charCodeAt(0);
     if (char_ == 57) { 
-      ms_box.keys[len_] = 'A';
-      return ms_box.keys.join('');
+      this.keys[len_] = 'A';
+      return this.keys.join('');
     }
     if (char_ == 90) { 
-      ms_box.keys[len_] = '0';
+      this.keys[len_] = '0';
     } else {
-      ms_box.keys[len_] = String.fromCharCode(char_ + 1);
-      return ms_box.keys.join('');
+      this.keys[len_] = String.fromCharCode(char_ + 1);
+      return this.keys.join('');
     }
   }
-  ms_box.keys.unshift('0');
-  return ms_box.keys.join('');
+  this.keys.unshift('0');
+  return this.keys.join('');
 }
 
 }:ms_box;
