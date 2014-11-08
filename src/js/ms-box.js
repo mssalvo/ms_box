@@ -321,7 +321,6 @@ scanner:function(t){
     )
   }
     if(o.hasClass(this.ms_textarea)){
-     uid= ms_box.uiid()
      o.attr("mark-id",uid)
      return $("<div/>")
     .addClass("ms-scn-textarea")
